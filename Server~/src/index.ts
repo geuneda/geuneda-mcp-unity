@@ -25,6 +25,16 @@ import { registerTransformTools } from './tools/transformTools.js';
 import { registerCreateMaterialTool, registerAssignMaterialTool, registerModifyMaterialTool, registerGetMaterialInfoTool } from './tools/materialTools.js';
 import { registerDuplicateGameObjectTool, registerDeleteGameObjectTool, registerReparentGameObjectTool } from './tools/gameObjectTools.js';
 import { registerBatchExecuteTool } from './tools/batchExecuteTool.js';
+import { registerPlayModeTools } from './tools/playModeTool.js';
+import { registerUndoRedoTools } from './tools/undoRedoTool.js';
+import { registerCaptureScreenshotTool } from './tools/screenshotTool.js';
+import { registerGetProjectSettingsTool, registerSetProjectSettingsTool, registerGetBuildScenesTool, registerSetBuildScenesTool } from './tools/projectSettingsTool.js';
+import { registerScriptTools } from './tools/scriptTools.js';
+import { registerAssetSearchTools } from './tools/assetSearchTools.js';
+import { registerAnimationTools } from './tools/animationTools.js';
+import { registerUITools } from './tools/uiTools.js';
+import { registerBuildTools } from './tools/buildTools.js';
+import { registerPhysicsTools } from './tools/physicsTools.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -90,6 +100,39 @@ registerGetMaterialInfoTool(server, mcpUnity, toolLogger);
 
 // Register Batch Execute Tool (high-priority for performance)
 registerBatchExecuteTool(server, mcpUnity, toolLogger);
+
+// Register Play Mode Tools
+registerPlayModeTools(server, mcpUnity, toolLogger);
+
+// Register Undo/Redo Tools
+registerUndoRedoTools(server, mcpUnity, toolLogger);
+
+// Register Screenshot Tool
+registerCaptureScreenshotTool(server, mcpUnity, toolLogger);
+
+// Register Project Settings Tools
+registerGetProjectSettingsTool(server, mcpUnity, toolLogger);
+registerSetProjectSettingsTool(server, mcpUnity, toolLogger);
+registerGetBuildScenesTool(server, mcpUnity, toolLogger);
+registerSetBuildScenesTool(server, mcpUnity, toolLogger);
+
+// Register Script Tools
+registerScriptTools(server, mcpUnity, toolLogger);
+
+// Register Asset Search Tools
+registerAssetSearchTools(server, mcpUnity, toolLogger);
+
+// Register Animation Tools
+registerAnimationTools(server, mcpUnity, toolLogger);
+
+// Register UI Tools
+registerUITools(server, mcpUnity, toolLogger);
+
+// Register Build Tools
+registerBuildTools(server, mcpUnity, toolLogger);
+
+// Register Physics Tools
+registerPhysicsTools(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);

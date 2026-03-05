@@ -411,6 +411,94 @@ namespace McpUnity.Unity
             GetMaterialInfoTool getMaterialInfoTool = new GetMaterialInfoTool();
             _tools.Add(getMaterialInfoTool.Name, getMaterialInfoTool);
 
+            // Register Play Mode Tools
+            EnterPlayModeTool enterPlayModeTool = new EnterPlayModeTool();
+            _tools.Add(enterPlayModeTool.Name, enterPlayModeTool);
+
+            ExitPlayModeTool exitPlayModeTool = new ExitPlayModeTool();
+            _tools.Add(exitPlayModeTool.Name, exitPlayModeTool);
+
+            PauseEditorTool pauseEditorTool = new PauseEditorTool();
+            _tools.Add(pauseEditorTool.Name, pauseEditorTool);
+
+            StepFrameTool stepFrameTool = new StepFrameTool();
+            _tools.Add(stepFrameTool.Name, stepFrameTool);
+
+            // Register Undo/Redo Tools
+            UndoTool undoTool = new UndoTool();
+            _tools.Add(undoTool.Name, undoTool);
+
+            RedoTool redoTool = new RedoTool();
+            _tools.Add(redoTool.Name, redoTool);
+
+            GetUndoHistoryTool getUndoHistoryTool = new GetUndoHistoryTool();
+            _tools.Add(getUndoHistoryTool.Name, getUndoHistoryTool);
+
+            // Register Screenshot Tool
+            CaptureScreenshotTool captureScreenshotTool = new CaptureScreenshotTool();
+            _tools.Add(captureScreenshotTool.Name, captureScreenshotTool);
+
+            // Register Project Settings Tools
+            GetProjectSettingsTool getProjectSettingsTool = new GetProjectSettingsTool();
+            _tools.Add(getProjectSettingsTool.Name, getProjectSettingsTool);
+
+            SetProjectSettingsTool setProjectSettingsTool = new SetProjectSettingsTool();
+            _tools.Add(setProjectSettingsTool.Name, setProjectSettingsTool);
+
+            GetBuildScenesTool getBuildScenesTool = new GetBuildScenesTool();
+            _tools.Add(getBuildScenesTool.Name, getBuildScenesTool);
+
+            SetBuildScenesTool setBuildScenesTool = new SetBuildScenesTool();
+            _tools.Add(setBuildScenesTool.Name, setBuildScenesTool);
+
+            // Register Script Tools
+            CreateScriptTool createScriptTool = new CreateScriptTool();
+            _tools.Add(createScriptTool.Name, createScriptTool);
+
+            AttachScriptTool attachScriptTool = new AttachScriptTool();
+            _tools.Add(attachScriptTool.Name, attachScriptTool);
+
+            GetScriptInfoTool getScriptInfoTool = new GetScriptInfoTool();
+            _tools.Add(getScriptInfoTool.Name, getScriptInfoTool);
+
+            // Register Asset Search Tools
+            SearchAssetsTool searchAssetsTool = new SearchAssetsTool();
+            _tools.Add(searchAssetsTool.Name, searchAssetsTool);
+
+            GetAssetDependenciesTool getAssetDependenciesTool = new GetAssetDependenciesTool();
+            _tools.Add(getAssetDependenciesTool.Name, getAssetDependenciesTool);
+
+            ReimportAssetTool reimportAssetTool = new ReimportAssetTool();
+            _tools.Add(reimportAssetTool.Name, reimportAssetTool);
+
+            // Register Animation Tools
+            GetAnimatorInfoTool getAnimatorInfoTool = new GetAnimatorInfoTool();
+            _tools.Add(getAnimatorInfoTool.Name, getAnimatorInfoTool);
+
+            SetAnimatorParameterTool setAnimatorParameterTool = new SetAnimatorParameterTool();
+            _tools.Add(setAnimatorParameterTool.Name, setAnimatorParameterTool);
+
+            // Register UI Tools
+            CreateUIElementTool createUIElementTool = new CreateUIElementTool();
+            _tools.Add(createUIElementTool.Name, createUIElementTool);
+
+            ModifyUIElementTool modifyUIElementTool = new ModifyUIElementTool();
+            _tools.Add(modifyUIElementTool.Name, modifyUIElementTool);
+
+            // Register Build Tools
+            BuildProjectTool buildProjectTool = new BuildProjectTool();
+            _tools.Add(buildProjectTool.Name, buildProjectTool);
+
+            GetBuildSettingsTool getBuildSettingsTool = new GetBuildSettingsTool();
+            _tools.Add(getBuildSettingsTool.Name, getBuildSettingsTool);
+
+            // Register Physics Tools
+            PhysicsRaycastTool physicsRaycastTool = new PhysicsRaycastTool();
+            _tools.Add(physicsRaycastTool.Name, physicsRaycastTool);
+
+            GetPhysicsSettingsTool getPhysicsSettingsTool = new GetPhysicsSettingsTool();
+            _tools.Add(getPhysicsSettingsTool.Name, getPhysicsSettingsTool);
+
             // Register BatchExecuteTool (must be registered last as it needs access to other tools)
             BatchExecuteTool batchExecuteTool = new BatchExecuteTool(this);
             _tools.Add(batchExecuteTool.Name, batchExecuteTool);
