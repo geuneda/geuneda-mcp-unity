@@ -98,30 +98,18 @@ namespace McpUnity.Utils
                 return CleanPathPrefix(serverPath);
             }
             
-            var assets = AssetDatabase.FindAssets("tsconfig");
+            string[] dirs = System.IO.Directory.GetDirectories("Assets", "Server~", System.IO.SearchOption.AllDirectories);
 
-            if(assets.Length == 1)
+            for (int n=0; n<dirs.Length; n++)
             {
-                // Convert relative path to absolute path
-                var relativePath = AssetDatabase.GUIDToAssetPath(assets[0]);
-                string fullPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", relativePath));
-
-                return CleanPathPrefix(fullPath);
-            }
-            if (assets.Length > 0)
-            {
-                foreach (var assetJson in assets)
+                string tsconfigPath = System.IO.Path.Combine(dirs[n], "tsconfig.json");
+                if (System.IO.File.Exists(tsconfigPath))
                 {
-                    string relativePath = AssetDatabase.GUIDToAssetPath(assetJson);
-                    string fullPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", relativePath));
-
-                    if(Path.GetFileName(Path.GetDirectoryName(fullPath)) == "Server~")
-                    {
-                        return CleanPathPrefix(Path.GetDirectoryName(fullPath));
-                    }
+                    string fullPath = System.IO.Path.GetFullPath(dirs[n]);
+                    return CleanPathPrefix(fullPath);
                 }
             }
-            
+
             // If we get here, we couldn't find the server path
             var errorString = "[MCP Unity] Could not locate Server directory. Please check the installation of the MCP Unity package.";
 
@@ -839,7 +827,7 @@ namespace McpUnity.Utils
                 // Method 4: Check if Unity's Library path indicates a VP (Virtual Player) subfolder
                 // Clone instances may use a modified library path
                 string libraryPath = Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Library"));
-                if (libraryPath.Contains("VP") && libraryPath.Contains("Library"))
+                if (IsVirtualPlayerLibraryPath(libraryPath))
                 {
                     // Looks like we're in a virtual player's library folder
                     _isMultiplayerPlayModeClone = true;
@@ -857,6 +845,46 @@ namespace McpUnity.Utils
                 _isMultiplayerPlayModeClone = false;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Returns true when the path contains a "Library" segment followed by a "VP" segment.
+        /// This avoids false positives from names like "MVP" or "CountyLibraryApp".
+        /// </summary>
+        private static bool IsVirtualPlayerLibraryPath(string libraryPath)
+        {
+            if (string.IsNullOrEmpty(libraryPath))
+            {
+                return false;
+            }
+
+            string normalizedPath = libraryPath.Replace('\\', '/');
+            string[] segments = normalizedPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            int libraryIndex = -1;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (string.Equals(segments[i], "Library", StringComparison.OrdinalIgnoreCase))
+                {
+                    libraryIndex = i;
+                    break;
+                }
+            }
+
+            if (libraryIndex < 0)
+            {
+                return false;
+            }
+
+            for (int i = libraryIndex + 1; i < segments.Length; i++)
+            {
+                if (string.Equals(segments[i], "VP", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
