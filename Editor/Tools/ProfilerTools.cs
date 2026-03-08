@@ -5,6 +5,7 @@ using McpUnity.Utils;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEditor;
+using UnityEditor.Profiling;
 using UnityEditorInternal;
 using Newtonsoft.Json.Linq;
 
@@ -94,7 +95,7 @@ namespace McpUnity.Tools
 
         private static JObject GetAssetMemoryBreakdown<T>(string typeName) where T : UnityEngine.Object
         {
-            var objects = Resources.FindObjectsOfTypeAll<T>();
+            var objects = UnityEngine.Resources.FindObjectsOfTypeAll<T>();
             long totalBytes = 0;
             foreach (var obj in objects)
             {
@@ -387,17 +388,18 @@ namespace McpUnity.Tools
 
                     if (categoryFilter != null)
                     {
-                        try
+                        bool matched = false;
+                        foreach (var filterCat in categoryFilter)
                         {
-                            string categoryName = frameData.GetItemCategoryName(childId);
-                            if (!categoryFilter.Contains(categoryName))
+                            if (name.IndexOf(filterCat, StringComparison.OrdinalIgnoreCase) >= 0)
                             {
-                                continue;
+                                matched = true;
+                                break;
                             }
                         }
-                        catch
+                        if (!matched)
                         {
-                            // GetItemCategoryName may not be available in all Unity versions
+                            continue;
                         }
                     }
 
