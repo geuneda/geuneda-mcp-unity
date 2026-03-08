@@ -10,7 +10,7 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 // ============================================================================
 
 const createUIElementToolName = 'create_ui_element';
-const createUIElementToolDescription = 'Creates a UI element (Canvas, Button, Text, Image, Panel, Slider, Toggle, InputField, Dropdown, ScrollView) with automatic Canvas and EventSystem setup.';
+const createUIElementToolDescription = 'Creates a UI element (Canvas, Button, Text, Image, Panel, Slider, Toggle, InputField, Dropdown, ScrollView) with automatic Canvas and EventSystem setup. Text elements use TextMeshPro (TMP).';
 const createUIElementParamsSchema = z.object({
   elementType: z.enum(['Canvas', 'Button', 'Text', 'Image', 'Panel', 'Slider', 'Toggle', 'InputField', 'Dropdown', 'ScrollView'])
     .describe('The type of UI element to create'),
@@ -79,7 +79,7 @@ async function createUIElementHandler(mcpUnity: McpUnity, params: z.infer<typeof
 // ============================================================================
 
 const modifyUIElementToolName = 'modify_ui_element';
-const modifyUIElementToolDescription = 'Modifies UI element properties such as text, fontSize, color, anchoredPosition, sizeDelta, and enabled state.';
+const modifyUIElementToolDescription = 'Modifies UI element properties such as text, fontSize, color, anchoredPosition, sizeDelta, and enabled state. Supports TextMeshPro text components.';
 const modifyUIElementParamsSchema = z.object({
   instanceId: z.number().optional().describe('The instance ID of the UI GameObject'),
   objectPath: z.string().optional().describe('The path of the UI GameObject in the hierarchy (alternative to instanceId)'),

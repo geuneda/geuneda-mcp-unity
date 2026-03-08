@@ -2,7 +2,7 @@
   "name": "com.geuneda.mcp-unity",
   "displayName": "Geuneda MCP Unity Server",
   "author": "geuneda",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "mcpname": "io.github.geuneda/mcp-unity",
   "unity": "2022.3",
   "license": "MIT",
