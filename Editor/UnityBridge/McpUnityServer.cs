@@ -526,6 +526,22 @@ namespace McpUnity.Unity
             GetPhysicsSettingsTool getPhysicsSettingsTool = new GetPhysicsSettingsTool();
             _tools.Add(getPhysicsSettingsTool.Name, getPhysicsSettingsTool);
 
+            // Register Profiler Tools
+            GetMemorySnapshotTool getMemorySnapshotTool = new GetMemorySnapshotTool();
+            _tools.Add(getMemorySnapshotTool.Name, getMemorySnapshotTool);
+
+            GetRenderingStatsTool getRenderingStatsTool = new GetRenderingStatsTool();
+            _tools.Add(getRenderingStatsTool.Name, getRenderingStatsTool);
+
+            GetFrameTimingTool getFrameTimingTool = new GetFrameTimingTool();
+            _tools.Add(getFrameTimingTool.Name, getFrameTimingTool);
+
+            GetProfilerDataTool getProfilerDataTool = new GetProfilerDataTool();
+            _tools.Add(getProfilerDataTool.Name, getProfilerDataTool);
+
+            GetProfilerReportTool getProfilerReportTool = new GetProfilerReportTool();
+            _tools.Add(getProfilerReportTool.Name, getProfilerReportTool);
+
             // Register BatchExecuteTool (must be registered last as it needs access to other tools)
             BatchExecuteTool batchExecuteTool = new BatchExecuteTool(this);
             _tools.Add(batchExecuteTool.Name, batchExecuteTool);

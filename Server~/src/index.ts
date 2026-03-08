@@ -35,6 +35,7 @@ import { registerAnimationTools } from './tools/animationTools.js';
 import { registerUITools } from './tools/uiTools.js';
 import { registerBuildTools } from './tools/buildTools.js';
 import { registerPhysicsTools } from './tools/physicsTools.js';
+import { registerProfilerTools } from './tools/profilerTools.js';
 import { registerGetMenuItemsResource } from './resources/getMenuItemResource.js';
 import { registerGetConsoleLogsResource } from './resources/getConsoleLogsResource.js';
 import { registerGetHierarchyResource } from './resources/getScenesHierarchyResource.js';
@@ -133,6 +134,9 @@ registerBuildTools(server, mcpUnity, toolLogger);
 
 // Register Physics Tools
 registerPhysicsTools(server, mcpUnity, toolLogger);
+
+// Register Profiler Tools
+registerProfilerTools(server, mcpUnity, toolLogger);
 
 // Register all resources into the MCP server
 registerGetTestsResource(server, mcpUnity, resourceLogger);
