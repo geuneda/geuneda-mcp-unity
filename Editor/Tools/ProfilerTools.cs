@@ -361,7 +361,8 @@ namespace McpUnity.Tools
                 frameIndex,
                 0,
                 HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName,
-                HierarchyFrameDataView.columnDontSort))
+                HierarchyFrameDataView.columnDontSort,
+                false))
             {
                 if (frameData == null || !frameData.valid)
                 {
@@ -605,7 +606,8 @@ namespace McpUnity.Tools
                     lastFrame,
                     0,
                     HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName,
-                    HierarchyFrameDataView.columnDontSort))
+                    HierarchyFrameDataView.columnDontSort,
+                    false))
                 {
                     if (frameData != null && frameData.valid)
                     {
