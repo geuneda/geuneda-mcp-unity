@@ -41,5 +41,10 @@ namespace McpUnity.Services
         /// </summary>
         /// <returns>Number of stored log entries</returns>
         int GetLogCount();
+
+        /// <summary>
+        /// Clear all stored logs
+        /// </summary>
+        void ClearLogs();
     }
 }

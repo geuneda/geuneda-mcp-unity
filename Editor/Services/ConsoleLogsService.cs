@@ -163,7 +163,7 @@ namespace McpUnity.Services
         /// <summary>
         /// Clear all stored logs
         /// </summary>
-        private void ClearLogs()
+        public void ClearLogs()
         {
             lock (_logEntries)
             {

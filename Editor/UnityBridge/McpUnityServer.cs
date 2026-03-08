@@ -355,11 +355,19 @@ namespace McpUnity.Unity
             // Register SendConsoleLogTool
             SendConsoleLogTool sendConsoleLogTool = new SendConsoleLogTool();
             _tools.Add(sendConsoleLogTool.Name, sendConsoleLogTool);
+
+            // Register ClearConsoleLogsTool
+            ClearConsoleLogsTool clearConsoleLogsTool = new ClearConsoleLogsTool(_consoleLogsService);
+            _tools.Add(clearConsoleLogsTool.Name, clearConsoleLogsTool);
             
             // Register UpdateComponentTool
             UpdateComponentTool updateComponentTool = new UpdateComponentTool();
             _tools.Add(updateComponentTool.Name, updateComponentTool);
-            
+
+            // Register InvokeMethodTool
+            InvokeMethodTool invokeMethodTool = new InvokeMethodTool();
+            _tools.Add(invokeMethodTool.Name, invokeMethodTool);
+
             // Register AddAssetToSceneTool
             AddAssetToSceneTool addAssetToSceneTool = new AddAssetToSceneTool();
             _tools.Add(addAssetToSceneTool.Name, addAssetToSceneTool);
