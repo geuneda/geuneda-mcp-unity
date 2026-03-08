@@ -234,6 +234,14 @@ args = ["ABSOLUTE/PATH/TO/mcp-unity/Server~/build/index.js"]
 3. "Request Timeout (seconds)" 값을 변경합니다
 4. Node.js 서버를 재시작합니다
 
+## 선택사항: 다중 클라이언트 동시 접속
+
+MCP Unity는 여러 MCP 클라이언트의 동시 접속을 지원합니다. Claude Code의 에이전트 팀 기능 등으로 여러 에이전트를 동시에 실행할 때 유용합니다.
+
+- 기본 최대 동시 접속 수는 **10**입니다
+- 변경하려면 Tools > MCP Unity > Server Window에서 "Max Connections" 값을 조정합니다
+- 유효 범위: 1~50 (파일 디스크립터 안전 제한)
+
 ## <a name="서버-디버깅"></a>서버 디버깅
 
 ### Node.js 서버 빌드

@@ -2,13 +2,13 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-16/server.schema.json",
   "name": "io.github.geuneda/mcp-unity",
   "description": "Unity Editor 작업 실행 및 MCP를 통한 데이터 조회를 위한 MCP Unity 서버",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "packages": [
     {
       "registryType": "npm",
       "registry_type": "npm",
       "identifier": "mcp-unity",
-      "version": "1.2.0",
+      "version": "1.4.0",
       "transport": { "type": "stdio" }
     }
   ]

@@ -13,7 +13,7 @@ namespace McpUnity.Unity
     public class McpUnitySettings
     {
         // Constants
-        public const string ServerVersion = "1.2.0";
+        public const string ServerVersion = "1.4.0";
         public const string PackageName = "com.geuneda.mcp-unity";
         public const int RequestTimeoutMinimum = 10;
         
@@ -39,6 +39,9 @@ namespace McpUnity.Unity
         
         [Tooltip("Allow connections from remote MCP bridges. When disabled, only localhost connections are allowed (default).")]
         public bool AllowRemoteConnections = false;
+
+        [Tooltip("Maximum number of simultaneous WebSocket client connections. Limits file descriptor usage to prevent Mono IOSelector crashes.")]
+        public int MaxConnections = 10;
 
         /// <summary>
         /// Singleton instance of settings
@@ -81,12 +84,26 @@ namespace McpUnity.Unity
                     // Create default settings file on the first time initialization
                     SaveSettings();
                 }
+
+                ValidateSettings();
             }
             catch (Exception ex)
             {
                 // Can't use LoggerService here as it depends on settings
                 Debug.LogError($"[MCP Unity] Failed to load settings: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Validates and clamps settings to valid ranges after loading
+        /// </summary>
+        private void ValidateSettings()
+        {
+            if (MaxConnections < 1) MaxConnections = 1;
+            if (MaxConnections > 50) MaxConnections = 50;
+            if (RequestTimeoutSeconds < RequestTimeoutMinimum)
+                RequestTimeoutSeconds = RequestTimeoutMinimum;
+            if (Port < 1 || Port > 65535) Port = 8090;
         }
 
         /// <summary>

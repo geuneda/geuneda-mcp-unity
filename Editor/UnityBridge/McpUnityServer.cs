@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
@@ -24,6 +25,21 @@ namespace McpUnity.Unity
         /// Unity is entering Play mode - clients should use fast polling instead of backoff
         /// </summary>
         public const ushort PlayMode = 4001;
+    }
+
+    /// <summary>
+    /// Stores information about a connected WebSocket client
+    /// </summary>
+    public class ClientInfo
+    {
+        public string Name { get; }
+        public DateTime ConnectedAt { get; }
+
+        public ClientInfo(string name, DateTime connectedAt)
+        {
+            Name = name;
+            ConnectedAt = connectedAt;
+        }
     }
 
     /// <summary>
@@ -87,9 +103,17 @@ namespace McpUnity.Unity
         public bool IsListening => _webSocketServer?.IsListening ?? false;
 
         /// <summary>
-        /// Dictionary of connected clients with this server
+        /// Lock object for thread-safe access to Clients dictionary.
+        /// WebSocket events (OnOpen/OnClose) fire on websocket-sharp thread pool,
+        /// while UI reads happen on Unity main thread.
         /// </summary>
-        public Dictionary<string, string> Clients { get; } = new Dictionary<string, string>();
+        public readonly object ClientsLock = new object();
+
+        /// <summary>
+        /// Dictionary of connected clients with this server.
+        /// Access must be synchronized via ClientsLock.
+        /// </summary>
+        public Dictionary<string, ClientInfo> Clients { get; } = new Dictionary<string, ClientInfo>();
 
         /// <summary>
         /// Private constructor to enforce singleton pattern
@@ -213,7 +237,10 @@ namespace McpUnity.Unity
             finally
             {
                 _webSocketServer = null;
-                Clients.Clear();
+                lock (ClientsLock)
+                {
+                    Clients.Clear();
+                }
                 McpLogger.LogInfo("WebSocket server stopped and resources cleaned up.");
             }
         }

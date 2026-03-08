@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using McpUnity.Utils;
 using UnityEngine;
 using UnityEditor;
@@ -91,7 +93,7 @@ namespace McpUnity.Unity
             // Port configuration
             EditorGUILayout.BeginHorizontal();
             int newPort = EditorGUILayout.IntField("Connection Port", settings.Port);
-            if (newPort < 1 || newPort > 65536)
+            if (newPort < 1 || newPort > 65535)
             {
                 newPort = settings.Port;
                 Debug.LogError($"{newPort} is an invalid port number. Please enter a number between 1 and 65535.");
@@ -146,7 +148,24 @@ namespace McpUnity.Unity
                 mcpUnityServer.StopServer();
                 mcpUnityServer.StartServer();
             }
-            
+
+            EditorGUILayout.Space();
+
+            // Max connections setting
+            EditorGUILayout.BeginHorizontal();
+            int newMaxConnections = EditorGUILayout.IntField(
+                new GUIContent("Max Connections",
+                    "Maximum number of simultaneous WebSocket client connections. Increase for agent teams."),
+                settings.MaxConnections);
+            if (newMaxConnections < 1) newMaxConnections = 1;
+            if (newMaxConnections > 50) newMaxConnections = 50;
+            if (newMaxConnections != settings.MaxConnections)
+            {
+                settings.MaxConnections = newMaxConnections;
+                settings.SaveSettings();
+            }
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.Space();
             
             // Enable info logs toggle
@@ -186,19 +205,24 @@ namespace McpUnity.Unity
             EditorGUILayout.LabelField("Connected Clients", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical("box"); // Keep the default gray box for the container
 
-            var clients = mcpUnityServer.Clients;
-            
-            if (clients.Count > 0)
+            // Take a thread-safe snapshot of connected clients for UI rendering
+            KeyValuePair<string, ClientInfo>[] clientsSnapshot;
+            lock (mcpUnityServer.ClientsLock)
             {
-                foreach (var client in clients)
+                clientsSnapshot = mcpUnityServer.Clients.ToArray();
+            }
+
+            if (clientsSnapshot.Length > 0)
+            {
+                foreach (var client in clientsSnapshot)
                 {
                     EditorGUILayout.BeginVertical(_connectedClientBoxStyle); // Use green background for each client
-                    
+
                     // Check if we have a meaningful client name (not empty and not the fallback)
-                    string clientName = client.Value;
-                    bool hasMeaningfulName = !string.IsNullOrEmpty(clientName) 
+                    string clientName = client.Value.Name;
+                    bool hasMeaningfulName = !string.IsNullOrEmpty(clientName)
                         && !clientName.Equals("Unknown MCP Client", StringComparison.OrdinalIgnoreCase);
-                    
+
                     if (hasMeaningfulName)
                     {
                         // Show name prominently when available
@@ -210,7 +234,7 @@ namespace McpUnity.Unity
                         // Show just the ID when no meaningful name is available
                         EditorGUILayout.LabelField($"Client: {client.Key}", EditorStyles.boldLabel);
                     }
-                    
+
                     EditorGUILayout.EndVertical();
                     EditorGUILayout.Space();
                 }

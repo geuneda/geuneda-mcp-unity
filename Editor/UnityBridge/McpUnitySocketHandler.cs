@@ -113,35 +113,14 @@ namespace McpUnity.Unity
         
         /// <summary>
         /// Handle WebSocket connection open.
-        /// Closes any stale connections first to prevent file descriptor accumulation.
+        /// Enforces a maximum connection limit to prevent file descriptor accumulation.
         /// websocket-sharp uses Mono's IOSelector/select(), which crashes when FD
-        /// values exceed ~1024. Limiting to one active connection keeps FD usage bounded.
+        /// values exceed ~1024. A hard cap keeps FD usage bounded while allowing
+        /// multiple simultaneous clients (e.g., agent teams).
         /// See: https://github.com/CoderGamester/mcp-unity/issues/110
         /// </summary>
         protected override void OnOpen()
         {
-            // Close any existing connections — MCP Unity is designed for one client at a time.
-            // This prevents file descriptor accumulation from reconnection cycles.
-            var staleIds = _server.Clients.Keys
-                .Where(id => id != ID)
-                .ToList();
-
-            if (staleIds.Count > 0)
-            {
-                foreach (var oldId in staleIds)
-                {
-                    try
-                    {
-                        Sessions.CloseSession(oldId, CloseStatusCode.Normal, "Replaced by new connection");
-                    }
-                    catch (Exception ex)
-                    {
-                        McpLogger.LogWarning($"Error closing stale session {oldId}: {ex.Message}");
-                    }
-                }
-                McpLogger.LogInfo($"Closed {staleIds.Count} stale connection(s) to accept new client");
-            }
-
             // Extract client name from the X-Client-Name header (if available)
             string clientName = "";
             NameValueCollection headers = Context.Headers;
@@ -149,11 +128,54 @@ namespace McpUnity.Unity
             {
                 clientName = headers["X-Client-Name"];
             }
-            
-            // Always add the client to the server's tracking dictionary
-            _server.Clients[ID] = clientName;
-            
-            McpLogger.LogInfo($"WebSocket client connected (ID: {ID}, Name: {(string.IsNullOrEmpty(clientName) ? "Unknown" : clientName)})");
+
+            int maxConnections = McpUnitySettings.Instance.MaxConnections;
+            var sessionsToClose = new List<string>();
+
+            lock (_server.ClientsLock)
+            {
+                // Evict oldest connections if at capacity.
+                // Limit eviction attempts to prevent infinite loop if CloseSession fails silently.
+                int maxEvictions = maxConnections;
+                int evicted = 0;
+
+                while (_server.Clients.Count >= maxConnections && evicted < maxEvictions)
+                {
+                    var oldestEntry = _server.Clients
+                        .OrderBy(kvp => kvp.Value.ConnectedAt)
+                        .FirstOrDefault();
+
+                    if (oldestEntry.Key == null) break;
+
+                    sessionsToClose.Add(oldestEntry.Key);
+                    _server.Clients.Remove(oldestEntry.Key);
+                    evicted++;
+                }
+
+                // Add the new client
+                _server.Clients[ID] = new ClientInfo(clientName, DateTime.UtcNow);
+            }
+
+            // Close evicted sessions outside the lock to avoid potential deadlocks
+            foreach (var sessionId in sessionsToClose)
+            {
+                try
+                {
+                    Sessions.CloseSession(sessionId, CloseStatusCode.Normal, "Connection limit reached");
+                }
+                catch (Exception ex)
+                {
+                    McpLogger.LogWarning($"Error closing session {sessionId}: {ex.Message}");
+                }
+            }
+
+            int currentCount;
+            lock (_server.ClientsLock)
+            {
+                currentCount = _server.Clients.Count;
+            }
+
+            McpLogger.LogInfo($"WebSocket client connected (ID: {ID}, Name: {(string.IsNullOrEmpty(clientName) ? "Unknown" : clientName)}, Total: {currentCount}/{maxConnections})");
         }
         
         /// <summary>
@@ -161,11 +183,16 @@ namespace McpUnity.Unity
         /// </summary>
         protected override void OnClose(CloseEventArgs e)
         {
-            _server.Clients.TryGetValue(ID, out string clientName);
-            
-            // Remove the client from the server
-            _server.Clients.Remove(ID);
-            
+            string clientName = null;
+            lock (_server.ClientsLock)
+            {
+                if (_server.Clients.TryGetValue(ID, out var clientInfo))
+                {
+                    clientName = clientInfo.Name;
+                }
+                _server.Clients.Remove(ID);
+            }
+
             McpLogger.LogInfo($"WebSocket client '{clientName}' disconnected: {e.Reason}");
         }
         
